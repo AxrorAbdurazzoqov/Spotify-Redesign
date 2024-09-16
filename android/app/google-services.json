@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976541725053",
+    "project_id": "spotifyapp-88eae",
+    "storage_bucket": "spotifyapp-88eae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976541725053:android:62f415a0187c33cc411c14",
+        "android_client_info": {
+          "package_name": "com.nite_dev.spotify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIeTlxRhbVhPynsX4JqG9v_dS51UP56fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
