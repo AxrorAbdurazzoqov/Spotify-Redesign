@@ -29,6 +29,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Profile', style: context.textLarge),
+        actions: [
+          IconButton(
+            onPressed: () {
+              bool isDark = AdaptiveTheme.of(context).mode == AdaptiveThemeMode.dark;
+
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    height: context.getHeight * 0.4,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: context.isDark ? ColorConst.instance.backgroundDark : ColorConst.instance.white,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: ColorConst.instance.lightGreen,
+                            ),
+                            const SizedBox(width: 30),
+                            Text('Axror Abdurazzoqov', style: context.textMedium),
+                          ],
+                        ),
+                        const Divider(),
+                        ListTile(
+                          leading: Icon(
+                            CupertinoIcons.moon_stars,
+                            color: context.isDark ? ColorConst.instance.white : ColorConst.instance.grey,
+                            size: 32,
+                          ),
+                          title: Text(
+                            'Dark mode',
+                            style: context.textMedium,
+                          ),
+                          trailing: Switch(
+                            value: isDark,
+                            onChanged: (value) {
+                              setState(() {
+                                isDark = !isDark;
+                                isDark ? AdaptiveTheme.of(context).setDark() : AdaptiveTheme.of(context).setLight();
+                              });
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () {
+                            FirebaseAuth.instance.signOut().then(
+                              (val) {
+                                if (context.mounted) {
+                                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const RegisterSignInScreen()), (_) => false);
+                                }
+                              },
+                              onError: (val) {
+                                if (context.mounted) {
+                                  context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed to Sign Out!');
+                                }
+                              },
+                            );
+                          },
+                          leading: Icon(CupertinoIcons.square_arrow_left, color: ColorConst.instance.red),
+                          title: Text(
+                            'Sign Out',
+                            style: context.textMedium!.copyWith(color: ColorConst.instance.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              Icons.more_vert,
+              size: 28,
+              color: context.isDark ? ColorConst.instance.white : null,
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Container(
@@ -50,109 +140,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: context.isDark ? ColorConst.instance.grey.withOpacity(0.5) : ColorConst.instance.grey.withOpacity(0.2),
-                      child: IconButton(
-                        iconSize: 25,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          CupertinoIcons.left_chevron,
-                          color: context.isDark ? ColorConst.instance.white : ColorConst.instance.black,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        bool isDark = AdaptiveTheme.of(context).mode == AdaptiveThemeMode.dark;
-
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                              height: context.getHeight * 0.4,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: context.isDark ? ColorConst.instance.backgroundDark : ColorConst.instance.white,
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 24,
-                                        backgroundColor: ColorConst.instance.lightGreen,
-                                      ),
-                                      const SizedBox(width: 30),
-                                      Text('Axror Abdurazzoqov', style: context.textMedium),
-                                    ],
-                                  ),
-                                  const Divider(),
-                                  ListTile(
-                                    leading: Icon(
-                                      CupertinoIcons.moon_stars,
-                                      color: context.isDark ? ColorConst.instance.white : ColorConst.instance.grey,
-                                      size: 32,
-                                    ),
-                                    title: Text(
-                                      'Dark mode',
-                                      style: context.textMedium,
-                                    ),
-                                    trailing: Switch(
-                                      value: isDark,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isDark = !isDark;
-                                          isDark ? AdaptiveTheme.of(context).setDark() : AdaptiveTheme.of(context).setLight();
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    onTap: () {
-                                      FirebaseAuth.instance.signOut().then(
-                                        (val) {
-                                          if (context.mounted) {
-                                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const RegisterSignInScreen()), (_) => false);
-                                          }
-                                        },
-                                        onError: (val) {
-                                          if (context.mounted) {
-                                            context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed to Sign Out!');
-                                          }
-                                        },
-                                      );
-                                    },
-                                    leading: Icon(CupertinoIcons.square_arrow_left, color: ColorConst.instance.red),
-                                    title: Text(
-                                      'Sign Out',
-                                      style: context.textMedium!.copyWith(color: ColorConst.instance.red),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                        
-                      },
-                      icon: Icon(
-                        Icons.more_vert,
-                        size: 28,
-                        color: context.isDark ? ColorConst.instance.white : null,
-                      ),
-                    ),
-                  ],
-                ),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [

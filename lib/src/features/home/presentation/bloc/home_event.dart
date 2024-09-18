@@ -1,5 +1,3 @@
 abstract class HomeEvent {}
 
-class GetAllSongs extends HomeEvent {
-  
-}
+class GetAllSongs extends HomeEvent {}

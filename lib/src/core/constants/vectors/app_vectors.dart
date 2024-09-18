@@ -24,4 +24,6 @@ class AppVectors {
   final String play = 'assets/icons/play.svg';
   final String shuffle = 'assets/icons/shuffle.svg';
   final String repeat = 'assets/icons/repeat.svg';
+  final String next = 'assets/icons/next.svg';
+  final String previous = 'assets/icons/previous.svg';
 }

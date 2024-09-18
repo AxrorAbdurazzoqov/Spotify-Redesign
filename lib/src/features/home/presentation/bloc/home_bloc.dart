@@ -10,9 +10,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       try {
         final QuerySnapshot result = await FirebaseFirestore.instance.collection('songs').get();
 
-        List<SongModel> data = result.docs.map((mp) => SongModel.fromJson(mp.data() as Map<String, dynamic>)).toList();
+        final List<SongModel> data = result.docs.map((mp) => SongModel.fromJson(mp.data() as Map<String, dynamic>)).toList();
+        emit(HomeState(status: HomeStatus.success, songs: data));
       } catch (e) {
-        print(e);
+        state.copyWith(status: HomeStatus.failure);
       }
     });
   }
