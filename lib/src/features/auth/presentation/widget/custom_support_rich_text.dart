@@ -5,8 +5,11 @@ import 'package:spotify/src/core/constants/color/color_const.dart';
 import 'package:spotify/src/core/extensions/get_text_theme.dart';
 
 class CustomSupportRichText extends StatelessWidget {
+  final VoidCallback onError;
+
   const CustomSupportRichText({
     super.key,
+    required this.onError,
   });
 
   @override
@@ -33,7 +36,7 @@ class CustomSupportRichText extends StatelessWidget {
                 try {
                   await FlutterEmailSender.send(email);
                 } catch (error) {
-                  print('Could not send email: $error');
+                  onError;
                 }
               },
           ),

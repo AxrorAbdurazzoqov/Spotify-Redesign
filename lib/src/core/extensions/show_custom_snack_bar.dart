@@ -7,17 +7,15 @@ extension ShowCustomSnackBar on BuildContext {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: color,
-        content: FittedBox(
-          child: Row(
-            children: [
-              Icon(
-                Icons.info,
-                color: ColorConst.instance.white,
-              ),
-              const SizedBox(width: 8),
-              Text(title),
-            ],
-          ),
+        content: Row(
+          children: [
+            Icon(
+              Icons.info,
+              color: ColorConst.instance.white,
+            ),
+            const SizedBox(width: 8),
+            Text(title),
+          ],
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
         duration: const Duration(seconds: 2),

@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify/src/core/constants/color/color_const.dart';
 import 'package:spotify/src/core/extensions/get_mediaquery_heigh_width.dart';
 import 'package:spotify/src/core/extensions/get_text_theme.dart';
+import 'package:spotify/src/core/extensions/show_custom_snack_bar.dart';
 import 'package:spotify/src/core/utils/app_validators.dart';
 import 'package:spotify/src/core/utils/firebase_service.dart';
 import 'package:spotify/src/core/widget/custom_elevated_button.dart';
@@ -60,7 +62,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.only(top: 18, bottom: 38),
                     child: BounceInDown(
                       delay: const Duration(milliseconds: 500),
-                      child: const CustomSupportRichText(),
+                      child: CustomSupportRichText(
+                        onError: () => context.showCustomSnackBar(title: 'Something went wrong', color: ColorConst.instance.red),
+                      ),
                     ),
                   ),
                   Form(

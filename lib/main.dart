@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify/firebase_options.dart';
 import 'package:spotify/src/core/constants/theme/app_theme.dart';
 import 'package:spotify/src/core/utils/firebase_notification_service.dart';
+import 'package:spotify/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:spotify/src/features/home/presentation/bloc/home_bloc.dart';
 import 'package:spotify/src/features/navbar/presentation/bloc/navbar_bloc.dart';
 import 'package:spotify/src/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -25,6 +26,7 @@ void main() async {
         BlocProvider(create: (context) => OnboardingBloc()),
         BlocProvider(create: (context) => NavbarBloc()),
         BlocProvider(create: (context) => HomeBloc()),
+        BlocProvider(create: (context) => AuthBloc()),
       ],
       child: const Spotify(),
     ),

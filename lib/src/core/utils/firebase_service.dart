@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spotify/src/core/constants/color/color_const.dart';
 import 'package:spotify/src/core/extensions/show_custom_snack_bar.dart';
@@ -11,27 +10,28 @@ class FirebaseService {
   static FirebaseService get instance => _instance;
   FirebaseService.init();
 
-  Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<void> signInWithGoogle({required VoidCallback onSuccess, required VoidCallback onError}) async {
+    try {
+      await GoogleSignIn().disconnect();
 
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential).whenComplete(onSuccess);
+    } catch (e) {
+      onError;
+    }
   }
 
-  Future<void> signInWithFacebook(BuildContext context) async {
-    final LoginResult loginResult = await FacebookAuth.instance.login();
-
-    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
-
-    await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    if (context.mounted) {
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false);
+  Future<void> signInAsGuest({required VoidCallback onSuccess, required VoidCallback onError}) async {
+    try {
+      await FirebaseAuth.instance.signInAnonymously().whenComplete(onSuccess);
+    } catch (e) {
+      onError;
     }
   }
 
@@ -55,22 +55,12 @@ class FirebaseService {
     }
   }
 
-  Future<void> signInWithEmail({required String email, required String password, required BuildContext context}) async {
+  Future<void> signInWithEmail({required String email, required String password, required VoidCallback onSuccess, required VoidCallback onError}) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      if (context.mounted) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false);
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' && context.mounted) {
-        context.showCustomSnackBar(color: ColorConst.instance.red, title: 'No user found for that email.');
-      } else if (e.code == 'wrong-password' && context.mounted) {
-        context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Wrong password provided for that user.');
-      }
+      onSuccess;
     } catch (e) {
-      if (context.mounted) {
-        context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Something went wrong');
-      }
+      onError;
     }
   }
 }

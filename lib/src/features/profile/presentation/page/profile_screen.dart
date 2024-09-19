@@ -156,8 +156,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(user!.email ?? '', style: FontStyleConst.instance.medium.copyWith(color: ColorConst.instance.grey)),
-                FittedBox(child: Text(user!.displayName ?? 'Guest', style: context.textLarge)),
-                const Spacer(),
+                Expanded(
+                  child: Text(
+                    user!.displayName ?? 'Guest',
+                    style: context.textLarge,
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -166,7 +170,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         text: '778\n',
                         style: context.textLarge,
                         children: [
-                          TextSpan(text: 'Followers', style: context.textMedium!.copyWith(color: ColorConst.instance.grey)),
+                          TextSpan(
+                            text: 'Followers',
+                            style: context.textMedium!.copyWith(color: ColorConst.instance.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -175,7 +182,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         text: '778\n',
                         style: context.textLarge,
                         children: [
-                          TextSpan(text: 'Following', style: context.textMedium!.copyWith(color: ColorConst.instance.grey)),
+                          TextSpan(
+                            text: 'Following',
+                            style: context.textMedium!.copyWith(color: ColorConst.instance.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -183,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-          )
+          ),
         ],
       ),
     );

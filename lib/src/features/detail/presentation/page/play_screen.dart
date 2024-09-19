@@ -21,7 +21,7 @@ class _PlayScreenState extends State<PlayScreen> {
   final player = AudioPlayer();
   late final StreamSubscription currentSubscription;
   Duration position = const Duration(seconds: 0);
-  late Duration duration;
+  Duration? duration;
 
   @override
   void initState() {
@@ -29,7 +29,8 @@ class _PlayScreenState extends State<PlayScreen> {
 
     player.setSource(UrlSource(widget.model.song)).then((_) async {
       player.play(UrlSource(widget.model.song));
-      duration = await player.getDuration() ?? const Duration(seconds: 0);
+      duration = await player.getDuration();
+      setState(() {});
     });
     initStreams();
   }
@@ -119,7 +120,7 @@ class _PlayScreenState extends State<PlayScreen> {
             SizedBox(
               width: double.infinity,
               child: Slider(
-                max: duration.inSeconds.toDouble(),
+                max: duration == null ? 0 : duration!.inSeconds.toDouble(),
                 value: position.inSeconds.toDouble(),
                 onChanged: (val) {
                   player.seek(Duration(seconds: val.toInt()));
@@ -134,7 +135,7 @@ class _PlayScreenState extends State<PlayScreen> {
                   style: context.textMedium,
                 ),
                 Text(
-                  "-${durationFormatter(duration.inSeconds - position.inSeconds)}",
+                  "-${durationFormatter(duration == null ? 0 : duration!.inSeconds - position.inSeconds)}",
                   style: context.textMedium,
                 ),
               ],
@@ -159,6 +160,7 @@ class _PlayScreenState extends State<PlayScreen> {
                       player.pause();
                       currentSubscription.pause();
                     }
+                    setState(() {});
                   },
                   icon: CircleAvatar(
                     backgroundColor: ColorConst.instance.lightGreen,

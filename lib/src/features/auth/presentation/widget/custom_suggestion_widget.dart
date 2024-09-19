@@ -43,27 +43,23 @@ class CustomSuggestionWidget extends StatelessWidget {
           children: [
             IconButton(
                 onPressed: () async {
-                  try {
-                    await FirebaseService.instance.signInWithGoogle().then((val) {
-                      if (context.mounted) {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false);
-                      }
-                    });
-                  } catch (e) {
-                    if (context.mounted) {
-                      context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed sign in with Google');
-                    }
-                  }
+                  await FirebaseService.instance.signInWithGoogle(
+                    onSuccess: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false),
+                    onError: () => context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed to sign in with google'),
+                  );
                 },
                 icon: SvgPicture.asset(AppVectors.instance.google)),
             const SizedBox(width: 30),
             IconButton(
               iconSize: 40,
-              onPressed: () {
-                FirebaseService.instance.signInWithFacebook(context);
+              onPressed: () async {
+                await FirebaseService.instance.signInAsGuest(
+                  onSuccess: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false),
+                  onError: () => context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed to sign in as Guest'),
+                );
               },
               icon: Icon(
-                Icons.facebook,
+                Icons.person,
                 color: ColorConst.instance.blue,
               ),
             )

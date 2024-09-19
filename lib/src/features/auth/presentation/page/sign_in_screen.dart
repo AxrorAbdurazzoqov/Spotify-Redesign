@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify/src/core/constants/color/color_const.dart';
 import 'package:spotify/src/core/extensions/get_mediaquery_heigh_width.dart';
 import 'package:spotify/src/core/extensions/get_text_theme.dart';
@@ -8,11 +8,13 @@ import 'package:spotify/src/core/extensions/show_custom_snack_bar.dart';
 import 'package:spotify/src/core/utils/app_validators.dart';
 import 'package:spotify/src/core/utils/firebase_service.dart';
 import 'package:spotify/src/core/widget/custom_elevated_button.dart';
+import 'package:spotify/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:spotify/src/features/auth/presentation/page/register_screen.dart';
 import 'package:spotify/src/features/auth/presentation/widget/custom_app_bar.dart';
 import 'package:spotify/src/features/auth/presentation/widget/custom_suggestion_widget.dart';
 import 'package:spotify/src/features/auth/presentation/widget/custom_support_rich_text.dart';
 import 'package:spotify/src/features/auth/presentation/widget/custom_text_form_field.dart';
+import 'package:spotify/src/features/navbar/presentation/page/navbar.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -61,7 +63,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     padding: const EdgeInsets.only(top: 18, bottom: 38),
                     child: ElasticInUp(
                       delay: const Duration(milliseconds: 500),
-                      child: const CustomSupportRichText(),
+                      child: CustomSupportRichText(
+                        onError: () => context.showCustomSnackBar(title: 'Something went wrong', color: ColorConst.instance.red),
+                      ),
                     ),
                   ),
                   Form(
@@ -86,8 +90,12 @@ class _SignInScreenState extends State<SignInScreen> {
                       delay: const Duration(milliseconds: 1200),
                       child: TextButton(
                           onPressed: () async {
-                            await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
-                            context.showCustomSnackBar(color: ColorConst.instance.blue, title: 'check email and set new password via link');
+                            if (_emailController.text.isNotEmpty && RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text)) {
+                              context.read<AuthBloc>().add(ResetPasswordEvent(email: _emailController.text));
+                              context.showCustomSnackBar(color: ColorConst.instance.blue, title: 'Check email to reset your password');
+                            } else {
+                              context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Enter email address');
+                            }
                           },
                           child: Text(
                             'Reset Password',
@@ -99,7 +107,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   CustomElevatedButton(
                       onTap: () {
                         if (_globalKey.currentState!.validate()) {
-                          FirebaseService.instance.signInWithEmail(email: _emailController.text, password: _passwordController.text, context: context);
+                          FirebaseService.instance.signInWithEmail(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            onSuccess: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Navbar()), (_) => false),
+                            onError: () => context.showCustomSnackBar(color: ColorConst.instance.red, title: 'Failed to sign in with email'),
+                          );
                         }
                       },
                       title: 'Sign In',
